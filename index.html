@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+	<link rel="stylesheet" type="text/css" href="proj.css">
+	<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+	
+  </head>
+  
+  
+  <body>
+
+	<div id="kontener">
+		<div id="tytul">Kluby sportowe w Poznaniu</div>
+		<div style="clear: both;"></div>
+		
+		<div id="map"></div>
+		<div id="opis">
+		<p style="text-align:center">Mapa prezentuje kluby sportowe zlokalizowane na terenie miasta Poznania<br>
+		podzielone wg. dyscyplin na osiem kategorii(klas):<br></p>
+		<p style="float: left;"><img src="./soccer_player.png" width="50" height="50"></p>
+		kluby piłkarskie<br> - kluby grające na różnych szczeblach<br> polskich lig piłkarskich<br>Poznań może pochwalić się<br> aż dwoma zespołami grającymi w Ekstraklasie<br>
+		<a href="https://www.poznan.pl/mim/sport/kluby-i-stowarzyszenia-sportowe,poi,82,6055/">Źródło informacji</a> <br>
+		<div style="clear: both;"></div>
+		
+		<p style="float: left;"><img src="./athlete.png" width="50" height="50"></p>
+		kluby piłki ręcznej<br> - popularny szczypiorniak, który jest<br> licznie reprezentowany w Poznaniu<br> przez wiele klubów<br>
+		<a href="https://zprp.pl/kluby-2/lista-klubow-w-wojewodztwie-wielkopolskim">Źródło informacji</a> <br>
+		<div style="clear: both;"></div>
+		
+		<p style="float: left;"><img src="./martial_arts.png" width="50" height="50"></p>
+		kluby sztuk walki<br> - kluby oferujące zajęcia dla członków oraz biorące udział <br> w różnych zawodach. Zarówno karate, jak i inne np. krav maga<br>
+		<a href="https://www.poznan.pl/mim/sport/kluby-i-stowarzyszenia-sportowe,poi,82,6055/">Źródło informacji</a> <br>
+		<div style="clear: both;"></div>
+		
+		<p style="float: left;"><img src="./horse_riding.png" width="50" height="50"></p>
+		kluby jeździeckie<br> - zarówno oferujące zajęcia <br> jak i biorące udział w zawodach <br>
+		<a href="https://www.poznan.pl/mim/sport/kluby-i-stowarzyszenia-sportowe,poi,82,6055/">Źródło informacji</a> <br>
+		<div style="clear: both;"></div>
+		
+		<p style="float: left;"><img src="./shooting.png" width="50" height="50"></p>
+		kluby strzeleckie<br> - z broni palnej oraz łucznictwo. <br> Biorące udział w zawodach<br>
+		<a href="https://www.poznan.pl/mim/sport/kluby-i-stowarzyszenia-sportowe,poi,82,6055/">Źródło informacji</a> <br>
+		<div style="clear: both;"></div>
+		
+		<p style="float: left;"><img src="./volleyball_ball.png" width="50" height="50"></p>
+		kluby siatkówki<br> - zarówno akademickie kluby sportowe <br> jak i kluby biorące udział w rozgrywkach ligowych <br>
+		<a href="https://www.poznan.pl/mim/sport/kluby-i-stowarzyszenia-sportowe,poi,82,6055/">Źródło informacji</a> <br>
+		<div style="clear: both;"></div>
+		
+		<p style="float: left;"><img src="./boat.png" width="50" height="50"></p>
+		kluby żeglarskie<br> - profesjonalne oraz półprofesjonalne kluby <br> dla zawodowców oraz miłośników tego sportu <br>
+		<a href="https://www.poznan.pl/mim/sport/kluby-i-stowarzyszenia-sportowe,poi,82,6055/">Źródło informacji</a> <br>
+		<div style="clear: both;"></div>
+		
+		<p style="float: left;"><img src="./basketball.png" width="50" height="50"></p>
+		kluby koszykarskie<br> - kluby biorące udział w rozgrywkach ligowych <br> oraz kluby akademickie<br>
+		<a href="https://www.poznan.pl/mim/sport/kluby-i-stowarzyszenia-sportowe,poi,82,6055/">Źródło informacji</a> <br>
+		</div>
+	
+		<div style="clear: both;"></div>
+		<div id="stopka">© by Michał Czech & Szymon Wiśniewski | Icons from <a href="https://www.flaticon.com/" target="_blank"> Flaticon</a></div>
+	</div>
+  
+	<script>
+	
+var icon_nozna = L.icon({
+	iconUrl: './soccer_player.png',
+	iconSize: [50,50]});
+	
+	var icon_reczna = L.icon({
+	iconUrl: './athlete.png',
+	iconSize: [50,50]});
+	
+	var icon_walka = L.icon({
+	iconUrl: './martial_arts.png',
+	iconSize: [50,50]});
+	
+	var icon_jezdziectwo = L.icon({
+	iconUrl: './horse_riding.png',
+	iconSize: [50,50]});
+	
+	var icon_strzelectwo = L.icon({
+	iconUrl: './shooting.png',
+	iconSize: [50,50]});
+	
+	var icon_siatka = L.icon({
+	iconUrl: './volleyball_ball.png',
+	iconSize: [50,50]});
+	
+	var icon_zeglarstwo = L.icon({
+	iconUrl: './boat.png',
+	iconSize: [50,50]});
+	
+	var icon_kosz = L.icon({
+	iconUrl: './basketball.png',
+	iconSize: [50,50]});
+	
+	var osmLink = '<a href="http://openstreetmap.org">OpenStreetMap</a>',
+       otmLink = '<a href="http://opentopomap.org/">OpenTopoMap</a>';
+	 
+       
+   var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+       osmAttrib = '&copy; ' + osmLink + ' Contributors',
+       otmUrl = 'http://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+       otmAttrib = '&copy; '+otmLink+' Contributors';
+  
+   var osmMap = L.tileLayer(osmUrl, {attribution: osmAttrib}),
+       otmMap = L.tileLayer(otmUrl, {attribution: otmAttrib});
+	   
+
+	var Stadia_Outdoors = L.tileLayer('https://tiles.stadiamaps.com/tiles/outdoors/{z}/{x}/{y}{r}.png', {
+	maxZoom: 20,
+	attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+});
+	var map = L.map('map',{layers: [osmMap]}).setView([52.41479257212679, 16.911417807753956], 12);
+
+
+	
+	
+	
+	var marker_nozna1 = L.marker([52.39792225104331, 16.85785702399125],{
+	icon: icon_nozna,
+	title: 'KKS Lech Poznań'})
+	.bindPopup('<h3>KKS Lech Poznań</h3> <img src="./lech.png" width="50px"/> <br> <a href= "https://lt.wikipedia.org/wiki/KKS_Lech_Pozna%C5%84">[Źródło]</a> ',
+	{maxWidth: 400,
+	minWidth: 50,
+	closeButton: true,
+	closeonclick: true,
+	className: 'balon'});
+	
+	
+	var marker_nozna2 = L.marker([52.393491550860304, 16.93115769063838],{
+	icon: icon_nozna,
+	title: 'Warta Poznań'})
+	.bindPopup('<h3>Warta Poznań</h3> <img src="./warta.png" width="50px"/> <br> <a href= "https://pl.wikipedia.org/wiki/Warta_Pozna%C5%84_(pi%C5%82ka_no%C5%BCna)">[Źródło]</a>',
+	{maxWidth: 400,
+	minWidth: 50,
+	closeButton: true,
+	closeonclick: true,
+	className: 'balon'});
+	
+	var marker_nozna3 = L.marker([52.382749493316375, 16.86703885849147],{
+	icon: icon_nozna,
+	title: 'F.C. Galacticos Poznań'})
+	.bindPopup('<h3>F.C. Galacticos Poznań</h3> <img src="./galaktikos.png" width="100px"/> <br> <a href= "https://fc_galacticos_poznan.futbolowo.pl/">[Źródło]</a>',
+	{maxWidth: 400,
+	minWidth: 50,
+	closeButton: true,
+	closeonclick: true,
+	className: 'balon'});
+	
+	var marker_nozna4 = L.marker([52.43996617872943, 16.935607298214844],{
+	icon: icon_nozna,
+	title: 'TPS Winogrady'})
+	.bindPopup('<h3>TPS Winogrady</h3> <img src="./tps.png" width="100px"/> <br> <a href= "https://www.tpswinogrady.pl/">[Źródło]</a>',
+	{maxWidth: 400,
+	minWidth: 50,
+	closeButton: true,
+	closeonclick: true,
+	className: 'balon'});
+	
+	var marker_nozna5 = L.marker([52.38583458356849, 16.959539883413456],{
+	icon: icon_nozna,
+	title: 'MKS Przemysław Poznań'})
+	.bindPopup('<h3>MKS Przemysław Poznań</h3> <img src="./przem.jfif" width="100px"/> <br> <a href= "http://www.mksprzemyslaw.pl/">[Źródło]</a>',
+	{maxWidth: 400,
+	minWidth: 50,
+	closeButton: true,
+	closeonclick: true,
+	className: 'balon'});
+	
+	var marker_reczna = L.marker([52.39723748920683, 16.884222522411353],{
+	icon: icon_reczna,
+	title: 'WKS Grunwald Poznań'})
+	.bindPopup('<h3>WKS Grunwald Poznań</h3> <img src="./wks.png" width="100px"/> <br> <a href= "http://wks-grunwald.poznan.pl/wksgrunwaldpilkareczna.php">[Źródło]</a>',
+	{maxWidth: 400,
+	minWidth: 50,
+	closeButton: true,
+	closeonclick: true,
+	className: 'balon'});
+	
+	var marker_reczna2 = L.marker([52.3831530197845, 16.86739489190157],{
+	icon: icon_reczna,
+	title: 'MKS Poznań'})
+	.bindPopup('<h3>MKS Poznań</h3> <img src="./mks.png" width="100px"/> <br> <a href= "http://mks.poznan.pl/">[Źródło]</a>',
+	{maxWidth: 400,
+	minWidth: 50,
+	closeButton: true,
+	closeonclick: true,
+	className: 'balon'});
+	
+	var marker_reczna3 = L.marker([52.39381737419399, 16.92940154260457],{
+	icon: icon_reczna,
+	title: 'KS Pyrki Poznań'})
+	.bindPopup('<h3>KS Pyrki Poznań</h3> <img src="./pyrki.jpg" width="100px"/> <br> <a href= "https://www.facebook.com/pyrkipoznan/">[Źródło]</a>',
+	{maxWidth: 400,
+	minWidth: 50,
+	closeButton: true,
+	closeonclick: true,
+	className: 'balon'});
+	
+	var marker_reczna4 = L.marker([52.38924660017079, 16.888579149918836],{
+	icon: icon_reczna,
+	title: 'KS AZS-AWF Poznań'})
+	.bindPopup('<h3>KS AZS-AWF Poznań</h3> <img src="./awf.png" width="100px"/> <br> <a href= "http://azs.awf.poznan.pl/">[Źródło]</a>',
+	{maxWidth: 400,
+	minWidth: 50,
+	closeButton: true,
+	closeonclick: true,
+	className: 'balon'});
+	
+	var marker_reczna5 = L.marker([52.315230673372504, 16.962562898423066],{
+	icon: icon_reczna,
+	title: 'MKS Malta Poznań'})
+	.bindPopup('<h3>MKS Malta Poznań</h3> <img src="./mks.png" width="100px"/> <br> <a href= "http://mks.poznan.pl/">[Źródło]</a>',
+	{maxWidth: 400,
+	minWidth: 50,
+	closeButton: true,
+	closeonclick: true,
+	className: 'balon'});
+	
+	var marker_walka1 = L.marker([52.451584218295736, 16.946710498427045],{
+	icon: icon_walka,
+	title: '"Orzeł" - karate'})
+	.bindPopup('<h3>"Orzeł" - karate</h3> <img src="./orzel.gif" width="100px"/> <br> <a href= "https://karatedo.pl/">[Źródło]</a>',
+	{maxWidth: 400,
+	minWidth: 50,
+	closeButton: true,
+	closeonclick: true,
+	className: 'balon'});
+	
+	var marker_walka2 = L.marker([52.397951072698135, 16.886709527261363],{
+	icon: icon_walka,
+	title: '"Akademia Judo" - judo'})
+	.bindPopup('<h3>"Akademia Judo" - judo</h3> <img src="./akademia.png" width="100px"/> <br> <a href= "http://akademiajudo.pl/">[Źródło]</a>',
+	{maxWidth: 400,
+	minWidth: 50,
+	closeButton: true,
+	closeonclick: true,
+	className: 'balon'});
+	
+	var marker_walka3 = L.marker([52.400640894303315, 16.95237472726133],{
+	icon: icon_walka,
+	title: 'KS "Budowlani"'})
+	.bindPopup('<h3>KS "Budowlani"</h3> <img src="./martial_arts.png" width="100px"/> <br> <a href= "https://pl.wikipedia.org/wiki/Budowlani_Pozna%C5%84">[Źródło]</a>',
+	{maxWidth: 400,
+	minWidth: 50,
+	closeButton: true,
+	closeonclick: true,
+	className: 'balon'});
+	
+	var marker_walka4 = L.marker([52.405708261004406, 16.956390640754034],{
+	icon: icon_walka,
+	title: 'KS "Czerwony Smok" - wiele'})
+	.bindPopup('<h3>KS "Czerwony Smok" - wiele</h3> <img src="./smok.png" width="100px"/> <br> <a href= "http://www.czerwony-smok.pl/">[Źródło]</a>',
+	{maxWidth: 400,
+	minWidth: 50,
+	closeButton: true,
+	closeonclick: true,
+	className: 'balon'});
+	
+	var marker_walka5 = L.marker([52.40652761533594, 16.927824198425704],{
+	icon: icon_walka,
+	title: 'KS "Alliance" - jiu-jitsu'})
+	.bindPopup('<h3>KS "Alliance" - jiu-jitsu</h3> <img src="./alien.jpg" width="100px"/> <br> <a href= "https://www.facebook.com/21jiujitsu/">[Źródło]</a>',
+	{maxWidth: 400,
+	minWidth: 50,
+	closeButton: true,
+	closeonclick: true,
+	className: 'balon'});
+	
+	var marker_jezdziectwo = L.marker([52.43341511505068, 16.83983686937874],{
+	icon: icon_jezdziectwo,
+	title: 'Klub Sportowy "Equarius"'})
+	.bindPopup('<h3>Klub Sportowy "Equarius"</h3> <img src="./equ.jpg" width="100px"/> <br> <a href= "https://www.facebook.com/KlubJezdzieckiEquariusPoznan/">[Źródło]</a>',
+	{maxWidth: 400,
+	minWidth: 50,
+	closeButton: true,
+	closeonclick: true,
+	className: 'balon'});
+	
+	var marker_jezdziectwo2 = L.marker([52.473971357773266, 16.95313279295072],{
+	icon: icon_jezdziectwo,
+	title: 'Klub Jeździecki Lotus'})
+	.bindPopup('<h3>Klub Jeździecki Lotus</h3> <img src="./horse_riding.png" width="100px"/> <br> <a href= "https://www.poznan.pl/mim/main/kluby-i-stowarzyszenia-sportowe,poi,82,6055/-,36553.html">[Źródło]</a>',
+	{maxWidth: 400,
+	minWidth: 50,
+	closeButton: true,
+	closeonclick: true,
+	className: 'balon'});
+	
+	var marker_jezdziectwo3 = L.marker([52.43246525581285, 16.854387682870996],{
+	icon: icon_jezdziectwo,
+	title: 'Klub Jeździecki CWJ'})
+	.bindPopup('<h3>Klub Jeździecki CWJ</h3> <img src="./wola.png" width="100px"/> <br> <a href= "https://hipodromwola.com.pl/">[Źródło]</a>',
+	{maxWidth: 400,
+	minWidth: 50,
+	closeButton: true,
+	closeonclick: true,
+	className: 'balon'});
+	
+	var marker_jezdziectwo4 = L.marker([52.44683810545026, 16.839597538692143],{
+	icon: icon_jezdziectwo,
+	title: 'Klub Jeździecki Pony'})
+	.bindPopup('<h3>Klub Jeździecki Pony</h3> <img src="./pony.jpg" width="100px"/> <br> <a href= "https://pony-poznan.pl/">[Źródło]</a>',
+	{maxWidth: 400,
+	minWidth: 50,
+	closeButton: true,
+	closeonclick: true,
+	className: 'balon'});
+	
+	var marker_jezdziectwo5 = L.marker([52.47793540110662, 16.781863092395884],{
+	icon: icon_jezdziectwo,
+	title: 'Ludowy Klub Jeździecki "Kiekrz"'})
+	.bindPopup('<h3>Ludowy Klub Jeździecki "Kiekrz"</h3> <img src="./kiekrz.jpg" width="100px"/> <br> <a href= "https://www.facebook.com/stajniakalinski/">[Źródło]</a>',
+	{maxWidth: 400,
+	minWidth: 50,
+	closeButton: true,
+	closeonclick: true,
+	className: 'balon'});
+	
+	var marker_strzelectwo = L.marker([52.37407212983258, 16.860101940540506],{
+	icon: icon_strzelectwo,
+	title: 'Wielkopolskie Towarzystwo Sportowe Tarcza-96'})
+	.bindPopup('<h3>Wielkopolskie Towarzystwo Sportowe Tarcza-96</h3> <img src="./tarcza.jfif" width="100px"/> <br> <a href= "https://www.poznan.pl/mim/sport/strzelnice,poi,76,39787/-,36865.html">[Źródło]</a>',
+	{maxWidth: 400,
+	minWidth: 50,
+	closeButton: true,
+	closeonclick: true,
+	className: 'balon'});
+	
+	var marker_strzelectwo2 = L.marker([52.37824733166983, 16.962841440540682],{
+	icon: icon_strzelectwo,
+	title: 'Klub Sportowy "Poznańskie Stowarzyszenie Strzelectwa Terenowego Orzeł"'})
+	.bindPopup('<h3>Klub Sportowy "Poznańskie Stowarzyszenie Strzelectwa Terenowego Orzeł"</h3> <img src="./shootong.png" width="100px"/> <br> <a href= "https://www.flaticon.com/">[Źródło]</a>',
+	{maxWidth: 400,
+	minWidth: 50,
+	closeButton: true,
+	closeonclick: true,
+	className: 'balon'});
+	
+	var marker_strzelectwo3 = L.marker([52.43049757170056, 16.901359498214497],{
+	icon: icon_strzelectwo,
+	title: 'Klub Strzelecki "Magnum"'})
+	.bindPopup('<h3>Klub Strzelecki "Magnum"</h3> <img src="./magnum.jpg" width="100px"/> <br> <a href= "https://gdziestrzelac.eu/strzelnica-magnum-poznan/">[Źródło]</a>',
+	{maxWidth: 400,
+	minWidth: 50,
+	closeButton: true,
+	closeonclick: true,
+	className: 'balon'});
+	
+	var marker_strzelectwo4 = L.marker([52.37141492633949, 16.934231269376255],{
+	icon: icon_strzelectwo,
+	title: 'Strzelecki Klub Sportowy "Dwór Grunwaldzki"'})
+	.bindPopup('<h3>Strzelecki Klub Sportowy "Dwór Grunwaldzki"</h3><img src="./dwor.png" width="100px"/> <br> <a href= "https://dwor-grunwaldzki.pl/">[Źródło]</a>',
+	{maxWidth: 400,
+	minWidth: 50,
+	closeButton: true,
+	closeonclick: true,
+	className: 'balon'});
+	
+	var marker_strzelectwo5 = L.marker([52.39841248395279, 16.889446417460217],{
+	icon: icon_strzelectwo,
+	title: 'Wielkopolski Klub Strzelecki "Grunwald"'})
+	.bindPopup('<h3>Wielkopolski Klub Strzelecki "Grunwald"</h3> <img src="./grunwald.png" width="100px"/> <br> <a href= "https://wksgrunwald.pl/">[Źródło]</a>',
+	{maxWidth: 400,
+	minWidth: 50,
+	closeButton: true,
+	closeonclick: true,
+	className: 'balon'});
+	
+	var marker_siatka = L.marker([52.46807498936202, 16.9412017902336],{
+	icon: icon_siatka,
+	title: 'Akademicki Związek Sportowy UAM'})
+	.bindPopup('<h3>Akademicki Związek Sportowy UAM</h3>  <img src="./volleyball_ball.png" width="100px"/> <br> <a href= "https://www.flaticon.com/">[Źródło]</a>',
+	{maxWidth: 400,
+	minWidth: 50,
+	closeButton: true,
+	closeonclick: true,
+	className: 'balon'});
+	
+	var marker_siatka2 = L.marker([52.46813994416416, 16.941468346738098],{
+	icon: icon_siatka,
+	title: 'Klub Sportowy MOCni razem'})
+	.bindPopup('<h3>Klub Sportowy MOCni razem</h3> <img src="./volleyball_ball.png" width="100px"/> <br> <a href= "https://www.flaticon.com/">[Źródło]</a>',
+	{maxWidth: 400,
+	minWidth: 50,
+	closeButton: true,
+	closeonclick: true,
+	className: 'balon'});
+	
+	var marker_siatka3 = L.marker([52.39846228905649, 16.949227869826547],{
+	icon: icon_siatka,
+	title: 'Klub Sportowy AZS-AWF'})
+	.bindPopup('<h3>Klub Sportowy AZS-AWF</h3> <img src="./volleyball_ball.png" width="100px"/> <br> <a href= "https://www.flaticon.com/">[Źródło]</a>',
+	{maxWidth: 400,
+	minWidth: 50,
+	closeButton: true,
+	closeonclick: true,
+	className: 'balon'});
+	
+	var marker_siatka4 = L.marker([52.40687641880738, 16.906048255885356],{
+	icon: icon_siatka,
+	title: 'Klub Sportowy Energetyk'})
+	.bindPopup('<h3>Klub Sportowy Energetyk</h3> <img src="./volleyball_ball.png" width="100px"/> <br> <a href= "https://www.flaticon.com/">[Źródło]</a>',
+	{maxWidth: 400,
+	minWidth: 50,
+	closeButton: true,
+	closeonclick: true,
+	className: 'balon'});
+	
+	var marker_siatka5 = L.marker([52.39825060136773, 16.871622998323943],{
+	icon: icon_siatka,
+	title: 'SKF KS Poznań'})
+	.bindPopup('<h3>SKF KS Poznań</h3> <img src="./volleyball_ball.png" width="100px"/> <br> <a href= "https://www.flaticon.com/">[Źródło]</a>',
+	{maxWidth: 400,
+	minWidth: 50,
+	closeButton: true,
+	closeonclick: true,
+	className: 'balon'});
+	
+	var marker_zeglarstwo = L.marker([52.472915927856114, 16.764011630784523],{
+	icon: icon_zeglarstwo,
+	title: 'Rzemieślniczy Jacht- Klub Poznański'})
+	.bindPopup('<h3>Rzemieślniczy Jacht- Klub Poznański</h3> <img src="./rzem.png" width="100px"/> <br> <a href= "http://www.rjkp.pl/">[Źródło]</a>',
+	{maxWidth: 400,
+	minWidth: 50,
+	closeButton: true,
+	closeonclick: true,
+	className: 'balon'});
+	
+	var marker_zeglarstwo2 = L.marker([52.358567070621554, 16.881109040539904],{
+	icon: icon_zeglarstwo,
+	title: 'Akademicki Klub Płetwonurków Plusk'})
+	.bindPopup('<h3>Akademicki Klub Płetwonurków Plusk</h3> <img src="./boat.png" width="100px"/> <br> <a href= "https://www.poznan.pl/mim/oswiata/kluby-i-stowarzyszenia-sportowe,poi,82/akademicki-klub-pletwonurkow-plusk,36567.html">[Źródło]</a>',
+	{maxWidth: 400,
+	minWidth: 50,
+	closeButton: true,
+	closeonclick: true,
+	className: 'balon'});
+	
+	var marker_zeglarstwo3 = L.marker([52.47323465620223, 16.77308343684195],{
+	icon: icon_zeglarstwo,
+	title: 'Klub Sportowy "Navigare"'})
+	.bindPopup('<h3>Klub Sportowy "Navigare"</h3> <img src="./navigare.jpg" width="100px"/> <br> <a href= "https://www.facebook.com/KSNavigare/">[Źródło]</a>',
+	{maxWidth: 400,
+	minWidth: 50,
+	closeButton: true,
+	closeonclick: true,
+	className: 'balon'});
+	
+	var marker_zeglarstwo4 = L.marker([52.43607861663244, 16.93829808287119],{
+	icon: icon_zeglarstwo,
+	title: 'Wielkopolski Klub Bałtycki'})
+	.bindPopup('<h3>Wielkopolski Klub Bałtycki</h3> <img src="./boat.png" width="100px"/> <br> <a href= "https://www.poznan.pl/mim/main/kluby-i-stowarzyszenia-sportowe,poi,82/-,27261.html">[Źródło]</a>',
+	{maxWidth: 400,
+	minWidth: 50,
+	closeButton: true,
+	closeonclick: true,
+	className: 'balon'});
+	
+	var marker_zeglarstwo5 = L.marker([52.47388307426794, 16.777182269380308],{
+	icon: icon_zeglarstwo,
+	title: 'KLub Zeglarski MEWA'})
+	.bindPopup('<h3>KLub Zeglarski MEWA</h3> <img src="./mewa.jpg" width="100px"/> <br> <a href= "https://www.facebook.com/KlubZeglarskiMewaPoznan/">[Źródło]</a>',
+	{maxWidth: 400,
+	minWidth: 50,
+	closeButton: true,
+	closeonclick: true,
+	className: 'balon'});
+	
+	var marker_kosz = L.marker([52.46342832789591, 16.909908751907867],{
+	icon: icon_kosz,
+	title: 'Klub Sportowy "Szkoły Da Vinci" Pawła Krajewskiego'})
+	.bindPopup('<h3>Klub Sportowy "Szkoły Da Vinci" Pawła Krajewskiego</h3> <img src="./vinci.png" width="100px"/> <br> <a href= "https://www.facebook.com/ksdavinci/?locale=pl_PL">[Źródło]</a>',
+	{maxWidth: 400,
+	minWidth: 50,
+	closeButton: true,
+	closeonclick: true,
+	className: 'balon'});
+	
+	var marker_kosz2 = L.marker([52.39478679211566, 16.919489982869585],{
+	icon: icon_kosz,
+	title: 'Wielkopolski Klub Sportowy Głuchych'})
+	.bindPopup('<h3>Wielkopolski Klub Sportowy Głuchych</h3> <img src="./wksg.jpg" width="100px"/> <br> <a href= "https://www.facebook.com/Wielkopolski-Klub-Sportowy-G%C5%82uchych-Pozna%C5%84-191445634234262/">[Źródło]</a>',
+	{maxWidth: 400,
+	minWidth: 50,
+	closeButton: true,
+	closeonclick: true,
+	className: 'balon'});
+	
+	var marker_kosz3 = L.marker([52.40882215561357, 16.935784569377777],{
+	icon: icon_kosz,
+	title: 'Młodzieżowy Klub Koszykówki "Pyra"'})
+	.bindPopup('<h3>Młodzieżowy Klub Koszykówki "Pyra"</h3> <img src="./pyra.jpg" width="100px"/> <br> <a href= "https://www.facebook.com/MKKPyraPoznan">[Źródło]</a>',
+	{maxWidth: 400,
+	minWidth: 50,
+	closeButton: true,
+	closeonclick: true,
+	className: 'balon'});
+	
+	var marker_kosz4 = L.marker([52.40440220684486, 16.92237811170584],{
+	icon: icon_kosz,
+	title: ' Międzyszkolny Uczniowski Klub Koszykówki "NATI Poznań"'})
+	.bindPopup('<h3>Międzyszkolny Uczniowski Klub Koszykówki "NATI Poznań"</h3> <img src="./basketball.png" width="100px"/> <br> <a href= "https://www.poznan.pl/mim/turystyka/de/miedzyszkolny-uczniowski-klub-koszykowki-nati-poznan,poi,82,6055/miedzyszkolny-uczniowski-klub-koszykowki-nati-poznan,56510.html">[Źródło]</a>',
+	{maxWidth: 400,
+	minWidth: 50,
+	closeButton: true,
+	closeonclick: true,
+	className: 'balon'});
+	
+	var marker_kosz5 = L.marker([52.3941305447124, 16.929622540541292],{
+	icon: icon_kosz,
+	title: 'Enea Basket Poznań'})
+	.bindPopup('<h3>Enea Basket Poznań</h3> <img src="./basket.png" width="100px"/> <br> <a href= "https://kksbasket.poznan.pl/">[Źródło]</a>',
+	{maxWidth: 400,
+	minWidth: 50,
+	closeButton: true,
+	closeonclick: true,
+	className: 'balon'});
+	
+	
+	
+	
+	
+	
+	
+	
+	var nozna = L.layerGroup([marker_nozna1, marker_nozna2, marker_nozna3, marker_nozna4, marker_nozna5 ]);
+	
+	var reczna = L.layerGroup([marker_reczna, marker_reczna2, marker_reczna3, marker_reczna4, marker_reczna5 ]);
+	
+	var walka = L.layerGroup([marker_walka1, marker_walka2, marker_walka3, marker_walka4, marker_walka5 ]);
+	
+	var jezdziectwo = L.layerGroup([marker_jezdziectwo, marker_jezdziectwo2, marker_jezdziectwo3, marker_jezdziectwo4, marker_jezdziectwo5 ]);
+	
+	var strzelectwo = L.layerGroup([marker_strzelectwo, marker_strzelectwo2, marker_strzelectwo3, marker_strzelectwo4, marker_strzelectwo5 ]);
+	
+	var siatka = L.layerGroup([marker_siatka, marker_siatka2, marker_siatka3, marker_siatka4, marker_siatka5 ]);
+	
+	var zeglarstwo = L.layerGroup([marker_zeglarstwo, marker_zeglarstwo2, marker_zeglarstwo3, marker_zeglarstwo4, marker_zeglarstwo5 ]);
+	
+	var kosz = L.layerGroup([marker_kosz, marker_kosz2, marker_kosz3, marker_kosz4, marker_kosz5]);
+	
+	var baseLayers = {
+	"OSM Mapnik": osmMap,
+	"Topogrophy": otmMap,
+	"Outdors": Stadia_Outdoors
+	    };
+	var overlays = {
+	"<img src= './soccer_player.png' width=18px'/> <span class='my-layer-item'>Piłka nożna</span>": nozna,
+	"<img src= './athlete.png' width=18px'/> <span class='my-layer-item'>Piłka ręczna</span>": reczna,
+	"<img src= './martial_arts.png' width=18px'/> <span class='my-layer-item'>Sztuki walki</span>": walka,
+	"<img src= './horse_riding.png' width=18px'/> <span class='my-layer-item'>Jeżdziectwo</span>": jezdziectwo,
+	"<img src= './shooting.png' width=18px'/> <span class='my-layer-item'>Strzelectwo</span>": strzelectwo,
+	"<img src= './volleyball_ball.png' width=18px'/> <span class='my-layer-item'>Siatkówka</span>": siatka,
+	"<img src= './boat.png' width=18px'/> <span class='my-layer-item'>Żeglarstwo</span>": zeglarstwo,
+	"<img src= './basketball.png' width=18px'/> <span class='my-layer-item'>Koszykówka</span>": kosz
+	};
+	
+
+	L.control.layers(baseLayers, overlays).addTo(map);
+
+
+	</script>
+		
+	
+	
+	
+  </body>
+  
+</html>
